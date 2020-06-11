@@ -39,3 +39,10 @@ Cuando un jugador mate a otro se le otorgará un power up y un punto, la partida
 ![img](https://github.com/anfegoca/ARSW-Bomberman-Party/blob/master/resources/8.png)
 
 Al volver a jugar se devolverá a los jugadores a la sala de espera.
+## Diagrama de clases
+
+![img5](https://github.com/anfegoca/ARSW-Bomberman-Party/blob/master/resources/11.png)
+
+## Historias de usuario
+
+[Bomberman Party](https://tree.taiga.io/project/anfegoca-bomberman-party/backlog)
