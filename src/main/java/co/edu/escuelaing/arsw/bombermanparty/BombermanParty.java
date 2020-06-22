@@ -6,7 +6,16 @@ package co.edu.escuelaing.arsw.bombermanparty;
  */
 
 public class BombermanParty {
+    
+    private Escenario escenario;
+    
     public BombermanParty(){
         
     }
+    
+    
+    
+    
+    
+    
 }
