@@ -1,5 +1,6 @@
 package co.edu.escuelaing.arsw.bombermanparty;
 
+import co.edu.escuelaing.arsw.bombermanparty.aplicacion.Escenario;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 

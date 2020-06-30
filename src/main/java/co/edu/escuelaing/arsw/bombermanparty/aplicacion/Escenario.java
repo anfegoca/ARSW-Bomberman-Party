@@ -1,7 +1,10 @@
-package co.edu.escuelaing.arsw.bombermanparty;
+package co.edu.escuelaing.arsw.bombermanparty.aplicacion;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+
+import co.edu.escuelaing.arsw.bombermanparty.exeptions.BombermanPartyException;
 
 /**
  *
@@ -14,6 +17,7 @@ public class Escenario {
     private ArrayList<Bloque> bloques;
     private ArrayList<Fijo> fijos;
     private ArrayList<Temporal> temporales;
+    private ArrayList<Jugador> jugadores;
     
     public Escenario(){
         ancho=160;
@@ -21,6 +25,7 @@ public class Escenario {
         bloques = new ArrayList<>();
         fijos = new ArrayList<>();
         temporales = new ArrayList<>();
+        jugadores = new ArrayList<>();
         prepareBloquesFijos();
         prepareBloquesTemporales();
         
@@ -71,6 +76,27 @@ public class Escenario {
         return res;
     }
 
+    /**
+     * Agrega un jugador al escenario
+     * @param nombre Nomber del jugador a agregar
+     * @throws BombermanPartyException Si ya está lleno el escenario (4 jugadores)
+     */
+    public void agregarJugador(String nombre) throws BombermanPartyException{
+        Jugador jugador=null;
+        if(jugadores.size()==0){
+            jugador = new Jugador(nombre,0,0);
+        }else if(jugadores.size()==1){
+            jugador = new Jugador(nombre,ancho,0);
+        }else if(jugadores.size()==2){
+            jugador = new Jugador(nombre,0,alto);
+        }else if(jugadores.size()==3){
+            jugador = new Jugador(nombre,ancho,alto);
+        }else{
+            throw new BombermanPartyException(BombermanPartyException.JUGADORES_COMPLETOS);
+        }
+        jugadores.add(jugador);
+    }
+
     public int getAncho() {
         return ancho;
     }
@@ -78,5 +104,23 @@ public class Escenario {
     public int getAlto() {
         return alto;
     }
+
+    public List<Fijo> getFijos() {
+        return fijos;
+    }
+
+    public List<Temporal> getTemporales() {
+        return temporales;
+    }
+
+    public ArrayList<Jugador> getJugadores() {
+        return jugadores;
+    }
+
+    public void setJugadores(ArrayList<Jugador> jugadores) {
+        this.jugadores = jugadores;
+    }
+    
+    
     
 }

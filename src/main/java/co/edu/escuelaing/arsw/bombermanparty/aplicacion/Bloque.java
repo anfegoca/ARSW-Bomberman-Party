@@ -1,4 +1,4 @@
-package co.edu.escuelaing.arsw.bombermanparty;
+package co.edu.escuelaing.arsw.bombermanparty.aplicacion;
 
 /**
  *
@@ -23,4 +23,6 @@ public class Bloque {
             return false;
         }
     }
+
+    
 }
