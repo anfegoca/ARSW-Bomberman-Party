@@ -1,5 +1,5 @@
 package co.edu.escuelaing.arsw.bombermanparty.aplicacion;
-
+import java.awt.Rectangle;
 /**
  *
  * @author Andres Gonzalez
@@ -12,15 +12,33 @@ public class Jugador {
     private int muertes;
     private int puntos;
     private String nombre;
+    private int velocidad;
+    private Escenario escenario;
+    private Rectangle collider;
 
-    public Jugador(String nombre, int x,int y) {
+    public Jugador(Escenario escenario, String nombre, int x,int y) {
+        this.escenario = escenario;
         this.nombre = nombre;
         this.x=x;
         this.y=y;
         this.alto=10;
         this.ancho=10;
+        this.velocidad=1;
+        collider = new Rectangle(x,y,ancho,alto);
         muertes=0;
         puntos=0;
+    }
+    public void move(int x,int y){
+        int newX = this.x + x*velocidad;
+        int newY = this.y + y*velocidad;
+        collider.translate(x*velocidad, y*velocidad);
+        if(!escenario.colision(collider)){
+            this.x=newX;
+            this.y=newY;
+        }else{
+            collider.translate(-x*velocidad, -y*velocidad);
+        }
+        
     }
 
     public int getX() {
@@ -77,6 +95,14 @@ public class Jugador {
 
     public void setAlto(int alto) {
         this.alto = alto;
+    }
+
+    public int getVelocidad() {
+        return velocidad;
+    }
+
+    public void setVelocidad(int velocidad) {
+        this.velocidad = velocidad;
     }
     
 

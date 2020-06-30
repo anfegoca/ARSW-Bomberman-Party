@@ -3,6 +3,7 @@ package co.edu.escuelaing.arsw.bombermanparty.aplicacion;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.awt.Rectangle;
 
 import co.edu.escuelaing.arsw.bombermanparty.exeptions.BombermanPartyException;
 
@@ -84,17 +85,41 @@ public class Escenario {
     public void agregarJugador(String nombre) throws BombermanPartyException{
         Jugador jugador=null;
         if(jugadores.size()==0){
-            jugador = new Jugador(nombre,0,0);
+            jugador = new Jugador(this,nombre,0,0);
         }else if(jugadores.size()==1){
-            jugador = new Jugador(nombre,ancho,0);
+            jugador = new Jugador(this,nombre,ancho,0);
         }else if(jugadores.size()==2){
-            jugador = new Jugador(nombre,0,alto);
+            jugador = new Jugador(this,nombre,0,alto);
         }else if(jugadores.size()==3){
-            jugador = new Jugador(nombre,ancho,alto);
+            jugador = new Jugador(this,nombre,ancho,alto);
         }else{
             throw new BombermanPartyException(BombermanPartyException.JUGADORES_COMPLETOS);
         }
         jugadores.add(jugador);
+    }
+    /**
+     * Mueve al jugador dado su nombre en la dirección dada
+     * @param nombre nombre del jugador
+     * @param x posición en x
+     * @param y posición en y
+     */
+    public void moverJugador(String nombre,int x, int y){
+        for(Jugador j: jugadores){
+            if(j.getNombre().equals(nombre)){
+                j.move(x,y);
+            }
+        }
+
+    }
+    public boolean colision(Rectangle collider){
+        boolean res = false;
+        for(Bloque b: bloques){
+            if(b.choca(collider)){
+                res = true;
+                break;
+            }
+        }
+        return res;
     }
 
     public int getAncho() {

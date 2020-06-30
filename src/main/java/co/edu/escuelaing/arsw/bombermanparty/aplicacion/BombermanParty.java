@@ -60,10 +60,19 @@ public class BombermanParty {
         Escenario escenario = escenarios.get(codigo);
         return escenario.getFijos();
     }
-
+    /**
+     * Obtiene la lista de jugadores del Escenario dado
+     * @param codigo codigo del escenario
+     * @return lista de jugadores
+     */
     public List<Jugador> getJugadores(int codigo){
         Escenario escenario = escenarios.get(codigo);
         return escenario.getJugadores();
+    }
+    public void moverJugador(int codigo,String nombre,int x, int y){
+        Escenario escenario = escenarios.get(codigo);
+        escenario.moverJugador(nombre, x, y);
+
     }
     
     

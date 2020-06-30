@@ -55,7 +55,6 @@ public class BombermanController {
     @PostMapping("/addJugador")
     public void agregarJugador(@RequestParam(value = "nombre") String nombre,@RequestParam(value = "codigo") int codigo) {
         try {
-            System.out.println(nombre+" "+codigo);
             bp.agregarJugador(codigo,nombre);
         } catch (BombermanPartyException e) {
             // TODO Auto-generated catch block
@@ -68,11 +67,14 @@ public class BombermanController {
             ObjectMapper map = new ObjectMapper();
             List<Jugador> jugadores = bp.getJugadores(codigo);
             String json = map.writeValueAsString(jugadores);
-            System.out.println(json);
             return json;
         } catch (JsonProcessingException ex) {
             Logger.getLogger(BombermanController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "";
+    }
+    @PostMapping("/moverJugador")
+    public void moverJugador(@RequestParam(value = "nombre") String nombre,@RequestParam(value = "codigo") int codigo,@RequestParam(value = "x")int x,@RequestParam(value = "y")int y){
+        bp.moverJugador(codigo, nombre, x, y);
     }
 }
