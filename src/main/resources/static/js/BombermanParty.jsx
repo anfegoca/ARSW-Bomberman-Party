@@ -253,7 +253,9 @@ class MyForm extends React.Component {
                                         <br />
                                         <br />
                                         <input type='submit' />
+                                        
                                 </form>
+                                
                                 {this.state.visible ? <Escenario codigo={this.state.sala} user={this.state.username} /> : null}
                         </div>
                 );
