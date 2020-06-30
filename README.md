@@ -46,3 +46,9 @@ Al volver a jugar se devolverá a los jugadores a la sala de espera.
 ## Historias de usuario
 
 [Bomberman Party](https://tree.taiga.io/project/anfegoca-bomberman-party/backlog)
+
+# Segunda entrega
+## Diagrama aplicación
+![img5](https://github.com/anfegoca/ARSW-Bomberman-Party/blob/master/resources/diagrama%20aplicacion.png)
+## Diagrama presentación
+![img5](https://github.com/anfegoca/ARSW-Bomberman-Party/blob/master/resources/diagrama%20presentaci%C3%B3n.png)
