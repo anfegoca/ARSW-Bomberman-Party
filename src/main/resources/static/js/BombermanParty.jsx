@@ -1,4 +1,63 @@
+function BBServiceURL() {
+        var host = window.location.host;
+        var url = 'ws://' + (host) + '/bbService';
+        console.log("URL Calculada: " + url);
+        return url;
+}
 
+
+class WSBBChannel {
+        constructor(URL, callback,sala,user) {
+                this.URL = URL;
+                this.wsocket = new WebSocket(URL);
+                this.wsocket.onopen = (evt) => this.onOpen(evt);
+                this.wsocket.onmessage = (evt) => this.onMessage(evt);
+                this.wsocket.onerror = (evt) => this.onError(evt);
+                this.receivef = callback;
+                this.sala = sala;
+                this.user = user;
+                //this.ticket = null;
+        }
+
+
+        onOpen(evt) {
+                console.log("In onOpen", evt);
+                this.agregarJugador();
+
+        }
+        onMessage(evt) {
+                console.log("In onMessage", evt);
+                // Este if permite que el primer mensaje del servidor no se tenga en cuenta.
+                // El primer mensaje solo confirma que se estableció la conexión.
+                // De ahí en adelante intercambiaremos solo puntos(x,y) con el servidor
+                if (evt.data != "Connection established.") {
+                        let mens = evt.data.split("/");
+                        this.receivef(mens);
+                        //this.wsocket.send(this.ticket);
+                }
+        }
+        onError(evt) {
+                console.error("In onError", evt);
+        }
+
+        agregarJugador() {
+                let msg = "addJugador" + " " +(this.sala)+" "+(this.user);
+                console.log("agregando jugador.. "+"Sala: "+this.sala+" User: "+this.user);
+                this.wsocket.send(msg);
+        }
+        move(x,y){
+                let msg = "mov" + " " + (this.sala) + " " + (this.user) + " " + (x)+ " " + (y);
+                console.log("sending: ", msg);
+                this.wsocket.send(msg);
+        }
+        send(tipo, sala, jugador, mov) {
+                let msg = (tipo) + " " + (sala) + " " + (jugador) + " " + (mov);
+                console.log("sending: ", msg);
+                this.wsocket.send(msg);
+        }
+
+
+}
 class BloqueTemporal extends React.Component {
         constructor() {
                 super();
@@ -10,6 +69,22 @@ class BloqueTemporal extends React.Component {
         render() {
                 return (
                         <img src="../images/BloqueTemporal.png"
+                                style={{ width: this.state.zoom * this.props.w, height: this.state.zoom * this.props.h, position: 'absolute', top: this.state.zoom * this.props.y, left: this.state.zoom * this.props.x }}
+                        ></img>
+                );
+        }
+}
+class Bomba extends React.Component {
+        constructor() {
+                super();
+                this.state = {
+                        zoom: 3,
+                };
+        }
+
+        render() {
+                return (
+                        <img src="../images/bomba.png"
                                 style={{ width: this.state.zoom * this.props.w, height: this.state.zoom * this.props.h, position: 'absolute', top: this.state.zoom * this.props.y, left: this.state.zoom * this.props.x }}
                         ></img>
                 );
@@ -50,124 +125,106 @@ class Jugador extends React.Component {
         }
 }
 class Escenario extends React.Component {
-        constructor() {
-                super();
+        constructor(props) {
+                super(props);
+                this.comunicationWS =
+                        new WSBBChannel(BBServiceURL(),
+                                (msg) => {
+                                        console.log("On func call back ", msg);
+                                        if(msg[0]==="Temp"){
+                                                this.prepararBloquesTemporales(msg[1]);
+                                        }else if(msg[0]==="Fijo"){
+                                                this.prepararBloqueFijos(msg[1]);
+                                        }else if(msg[0]==="Jug"){
+                                                this.mostrarJugadores(msg[1]);
+                                        }
+                                        
+                                }
+                                ,this.props.sala,this.props.user);
                 this.state = {
+                        wsreference: this.comunicationWS,
                         zoom: 3,
-                        ancho: 160 * 3,
-                        alto: 160 * 3,
+                        ancho: 200 * 3,
+                        alto: 200 * 3,
                         bloquesfijos: [],
                         bloquesTemporales: [],
                         jugadores: [],
                 };
         }
         componentDidMount() {
-                this.agregarJugador();
-                this.prepararBloqueFijos();
-                this.prepararBloquesTemporales();
-                this.mostrarJugadores();
+                //this.agregarJugador();
+                //this.prepararBloqueFijos();
+                //this.prepararBloquesTemporales();
+                //this.mostrarJugadores();
                 this.eventos();
-                this.timerID = setInterval(
-                        () => this.actualizar(),
-                        1000
-                        );
+                //this.timerID = setInterval(
+                //        () => this.actualizar(),
+                //        1000
+                //);
 
         }
-        eventos(){
+        eventos() {
                 document.addEventListener('keydown', (event) => {
                         const keyName = event.key;
                         console.log('keydown event\n\n' + 'key: ' + keyName);
-                        if(keyName === "ArrowUp"){
-                                this.moverJugador(0,-this.state.zoom);
+                        if (keyName === "ArrowUp") {
+                                this.moverJugador(0, -5);
 
-                        }else if(keyName ==="ArrowDown"){
-                                this.moverJugador(0,this.state.zoom);
+                        } else if (keyName === "ArrowDown") {
+                                this.moverJugador(0, 5);
 
-                        }else if(keyName ==="ArrowLeft"){
-                                this.moverJugador(-this.state.zoom,0);
-                                
-                        }else if(keyName ==="ArrowRight"){
-                                this.moverJugador(this.state.zoom,0);
+                        } else if (keyName === "ArrowLeft") {
+                                this.moverJugador(-5, 0);
+
+                        } else if (keyName === "ArrowRight") {
+                                this.moverJugador(5, 0);
+                        } else if (keyName === " "){
+                                this.colocarBomba();
                         }
-                      });
+                });
         }
-        actualizar(){
+        actualizar() {
                 this.mostrarJugadores();
 
         }
-        moverJugador(x,y){
-                console.log("Mover"+x+" "+y+" "+this.props.user+" "+this.props.codigo);
-                const data = new FormData();
+        colocarBomba(){
+                for(let i = 0; i < this.state.jugadores.length; i++){
+                        var jug = this.state.jugadores[i];
+                        if(jug.nombre === this.props.user){
+                                break;         
+                        }
+                }
+                console.log(jug);
+                return (
+                        <Bomba  x={jug.x} y={jug.y} w={jug.ancho} h={jug.alto}/>
+                      );
 
-                data.append('nombre', this.props.user);
-                data.append('codigo', this.props.codigo);
-                data.append('x', x);
-                data.append('y', y);
+
+        }
+        moverJugador(x, y) {
+                console.log("Mover" + x + " " + y + " " + this.props.user + " " + this.props.sala);
+                this.state.wsreference.move(x,y);
+        }
+
+        prepararBloqueFijos(bloques) {
+                var obj = JSON.parse(bloques);
+                this.setState({
+                        bloquesfijos: obj
+                });
+
+        }
+        prepararBloquesTemporales(bloques) {
+                var obj = JSON.parse(bloques);
+                this.setState({
+                        bloquesTemporales: obj
+                });
                 
-
-                fetch("/moverJugador", {
-                        method: 'post',
-                        body: data
-                }).then(response => {
-                        console.log("mover jugador")
-                }).catch(err => {
-                        console.log(err)
-                })
-                
-
         }
-
-        prepararBloqueFijos() {
-                console.log("Fijos");
-                var url = "/getFijos?codigo=" + this.props.codigo;
-                fetch(url
-
-                )
-                        .then(res => res.json())
-                        .then((result) => {
-                                this.setState({
-                                        bloquesfijos: result
-                                });
-
-                        });
-
-        }
-        prepararBloquesTemporales() {
-                console.log("Temporales" + this.props.codigo);
-                var url = "/getTemporales?codigo=" + this.props.codigo;
-                fetch(url)
-                        .then(res => res.json())
-                        .then((result) => {
-                                this.setState({
-                                        bloquesTemporales: result
-                                });
-                        });
-        }
-        agregarJugador() {
-                const data = new FormData();
-
-                data.append('nombre', this.props.user);
-                data.append('codigo', this.props.codigo);
-                fetch("/addJugador", {
-                        method: 'post',
-                        body: data
-                }).then(response => {
-                        console.log("Jugador agregado")
-                }).catch(err => {
-                        console.log(err)
-                })
-        }
-        mostrarJugadores() {
-                console.log("Mostrar" + this.props.codigo);
-                var url = "/getJugadores?codigo=" + this.props.codigo;
-                fetch(url)
-                        .then(res => res.json())
-                        .then((result) => {
-                                this.setState({
-                                        jugadores: result
-                                });
-                        });
-
+        mostrarJugadores(jugadores) {
+                var obj = JSON.parse(jugadores);
+                this.setState({
+                        jugadores: obj
+                });
         }
 
 
@@ -176,28 +233,25 @@ class Escenario extends React.Component {
         render() {
                 const bloquesF = this.state.bloquesfijos.map((bloque, i) => {
                         return (
-                                <BloqueFijo x={bloque.x} y={bloque.y} w={bloque.ancho} h={bloque.alto}></BloqueFijo>
-
+                                <BloqueFijo key={i} x={bloque.x} y={bloque.y} w={bloque.ancho} h={bloque.alto}></BloqueFijo>
                         )
                 })
                 const bloquesT = this.state.bloquesTemporales.map((bloque, i) => {
                         return (
-                                <BloqueTemporal x={bloque.x} y={bloque.y} w={bloque.ancho} h={bloque.alto}></BloqueTemporal>
-
+                                <BloqueTemporal key={i} x={bloque.x} y={bloque.y} w={bloque.ancho} h={bloque.alto}></BloqueTemporal>
                         )
                 })
                 const jugadores = this.state.jugadores.map((jugador, i) => {
                         return (
-                                <Jugador x={jugador.x} y={jugador.y} w={jugador.ancho} h={jugador.alto}></Jugador>
+                                <Jugador key={jugador.nombre} x={jugador.x} y={jugador.y} w={jugador.ancho} h={jugador.alto}></Jugador>
 
                         )
                 })
                 return (
                         <div>
                                 <img src="../images/fondo.jpg"
-                                        style={{ width: this.state.ancho + 30, height: this.state.alto + 30, position: 'absolute', top: 0, left: 0 }}
+                                        style={{ width: this.state.ancho + 30, height: this.state.alto + 30, position: 'absolute',top: 0, left: 0 }}
                                 >
-
                                 </img>
                                 {bloquesF}
                                 {bloquesT}
@@ -253,17 +307,17 @@ class MyForm extends React.Component {
                                         <br />
                                         <br />
                                         <input type='submit' />
-                                        
+
                                 </form>
+
+                                {this.state.visible ? <Escenario sala={this.state.sala} user={this.state.username} /> : null}
                                 
-                                {this.state.visible ? <Escenario codigo={this.state.sala} user={this.state.username} /> : null}
                         </div>
                 );
         }
 }
 
 ReactDOM.render(
-
         <MyForm></MyForm>,
         document.getElementById('root')
 );

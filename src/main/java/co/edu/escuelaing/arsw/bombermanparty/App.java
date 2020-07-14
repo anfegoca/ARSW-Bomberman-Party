@@ -1,4 +1,4 @@
-package co.edu.escuelaing.arsw.bombermanparty.beans;
+package co.edu.escuelaing.arsw.bombermanparty;
 
 import java.util.Collections;
 

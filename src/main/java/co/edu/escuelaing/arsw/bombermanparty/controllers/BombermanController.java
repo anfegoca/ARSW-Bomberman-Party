@@ -1,4 +1,4 @@
-package co.edu.escuelaing.arsw.bombermanparty.beans;
+package co.edu.escuelaing.arsw.bombermanparty.controllers;
 
 import co.edu.escuelaing.arsw.bombermanparty.aplicacion.BombermanParty;
 import co.edu.escuelaing.arsw.bombermanparty.aplicacion.Fijo;
@@ -51,7 +51,7 @@ public class BombermanController {
         }
         return "";
     }
-
+    /*
     @PostMapping("/addJugador")
     public void agregarJugador(@RequestParam(value = "nombre") String nombre,@RequestParam(value = "codigo") int codigo) {
         try {
@@ -61,6 +61,7 @@ public class BombermanController {
             e.printStackTrace();
         }
     }
+    */
     @GetMapping("/getJugadores")
     public String getJugadores(@RequestParam(value = "codigo") int codigo){
         try {
@@ -77,4 +78,5 @@ public class BombermanController {
     public void moverJugador(@RequestParam(value = "nombre") String nombre,@RequestParam(value = "codigo") int codigo,@RequestParam(value = "x")int x,@RequestParam(value = "y")int y){
         bp.moverJugador(codigo, nombre, x, y);
     }
+    
 }

@@ -12,21 +12,23 @@ import co.edu.escuelaing.arsw.bombermanparty.exeptions.BombermanPartyException;
  * @author Andres Gonzalez
  */
 public class Escenario {
-    
     private int ancho;
     private int alto;
     private ArrayList<Bloque> bloques;
     private ArrayList<Fijo> fijos;
     private ArrayList<Temporal> temporales;
     private ArrayList<Jugador> jugadores;
+    private Rectangle collider;
+    
     
     public Escenario(){
-        ancho=160;
-        alto=160;
+        ancho=200;
+        alto=200;
         bloques = new ArrayList<>();
         fijos = new ArrayList<>();
         temporales = new ArrayList<>();
         jugadores = new ArrayList<>();
+        collider = new Rectangle(0,0,ancho+10,alto+10);
         prepareBloquesFijos();
         prepareBloquesTemporales();
         
@@ -35,14 +37,18 @@ public class Escenario {
      * Crea los bloques fijos
      */
     private void prepareBloquesFijos(){
-        for(int i=10;i<160;i+=20){
-            for(int j=10;j<160;j+=20){
+        
+        
+        
+        for(int i=10;i<200;i+=20){
+            for(int j=10;j<200;j+=20){
                 Fijo bloque=new Fijo(i,j);
                 bloques.add(bloque);
                 fijos.add(bloque);
             }
         }
     }
+    
     /**
      * Crea los bloques temporales
      */
@@ -111,6 +117,9 @@ public class Escenario {
         }
 
     }
+    public boolean inEscenario(Rectangle collider){
+        return this.collider.contains(collider);
+    }
     public boolean colision(Rectangle collider){
         boolean res = false;
         for(Bloque b: bloques){
@@ -145,6 +154,14 @@ public class Escenario {
     public void setJugadores(ArrayList<Jugador> jugadores) {
         this.jugadores = jugadores;
     }
+	public void quitarJugador(String nombre) {
+        for(Jugador j: jugadores){
+            if(j.getNombre().equals(nombre)){
+                jugadores.remove(j);
+                break;
+            }
+        }
+	}
     
     
     

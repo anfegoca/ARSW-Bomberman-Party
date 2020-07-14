@@ -32,7 +32,7 @@ public class Jugador {
         int newX = this.x + x*velocidad;
         int newY = this.y + y*velocidad;
         collider.translate(x*velocidad, y*velocidad);
-        if(!escenario.colision(collider)){
+        if(!escenario.colision(collider) && escenario.inEscenario(collider)){
             this.x=newX;
             this.y=newY;
         }else{
