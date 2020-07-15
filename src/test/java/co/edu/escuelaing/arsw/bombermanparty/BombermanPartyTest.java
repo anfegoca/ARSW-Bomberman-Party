@@ -13,6 +13,7 @@ public class BombermanPartyTest {
     /**
      * Verifica que no hayan bloques en donde aparecen los jugadores
      */
+    /*
     @Test
     public void CrearEscenario(){
         Escenario escenario = new Escenario();
@@ -26,5 +27,6 @@ public class BombermanPartyTest {
         }
         assertTrue(res);   
     }
+    */
     
 }

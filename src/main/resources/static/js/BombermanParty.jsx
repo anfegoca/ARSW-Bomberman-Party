@@ -50,6 +50,11 @@ class WSBBChannel {
                 console.log("sending: ", msg);
                 this.wsocket.send(msg);
         }
+        colocarBomba(){
+                let msg = "bom" +" "+(this.sala)+" "+(this.user);
+                console.log("sending: ",msg);
+                this.wsocket.send(msg);
+        }
         send(tipo, sala, jugador, mov) {
                 let msg = (tipo) + " " + (sala) + " " + (jugador) + " " + (mov);
                 console.log("sending: ", msg);
@@ -118,7 +123,7 @@ class Jugador extends React.Component {
 
         render() {
                 return (
-                        <img src="../images/jugador.jpg"
+                        <img src="../images/jugador.png"
                                 style={{ width: this.state.zoom * this.props.w, height: this.state.zoom * this.props.h, position: 'absolute', top: this.state.zoom * this.props.y, left: this.state.zoom * this.props.x }}
                         ></img>
                 );
@@ -137,6 +142,8 @@ class Escenario extends React.Component {
                                                 this.prepararBloqueFijos(msg[1]);
                                         }else if(msg[0]==="Jug"){
                                                 this.mostrarJugadores(msg[1]);
+                                        }else if(msg[0]==="Bomb"){
+                                                this.mostrarBombas(msg[1]);
                                         }
                                         
                                 }
@@ -149,6 +156,7 @@ class Escenario extends React.Component {
                         bloquesfijos: [],
                         bloquesTemporales: [],
                         jugadores: [],
+                        bombas: [],
                 };
         }
         componentDidMount() {
@@ -188,17 +196,14 @@ class Escenario extends React.Component {
 
         }
         colocarBomba(){
-                for(let i = 0; i < this.state.jugadores.length; i++){
-                        var jug = this.state.jugadores[i];
-                        if(jug.nombre === this.props.user){
-                                break;         
-                        }
-                }
-                console.log(jug);
-                return (
-                        <Bomba  x={jug.x} y={jug.y} w={jug.ancho} h={jug.alto}/>
-                      );
-
+                this.state.wsreference.colocarBomba();
+                
+        }
+        mostrarBombas(bombas){
+                var obj = JSON.parse(bombas);
+                this.setState({
+                        bombas: obj
+                });
 
         }
         moverJugador(x, y) {
@@ -247,6 +252,12 @@ class Escenario extends React.Component {
 
                         )
                 })
+                const bombas = this.state.bombas.map((bomba, i) => {
+                        return (
+                                <Bomba key={i} x={bomba.x} y={bomba.y} w={bomba.ancho} h={bomba.alto}></Bomba>
+
+                        )
+                })
                 return (
                         <div>
                                 <img src="../images/fondo.jpg"
@@ -256,6 +267,8 @@ class Escenario extends React.Component {
                                 {bloquesF}
                                 {bloquesT}
                                 {jugadores}
+                                {bombas}
+
                         </div>
 
                 );

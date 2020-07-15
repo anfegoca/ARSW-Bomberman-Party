@@ -1,5 +1,9 @@
 package co.edu.escuelaing.arsw.bombermanparty.aplicacion;
+
 import java.awt.Rectangle;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 /**
  *
  * @author Andres Gonzalez
@@ -15,6 +19,8 @@ public class Jugador {
     private int velocidad;
     private Escenario escenario;
     private Rectangle collider;
+    private int poder;
+    private int numBombas;
 
     public Jugador(Escenario escenario, String nombre, int x,int y) {
         this.escenario = escenario;
@@ -27,6 +33,8 @@ public class Jugador {
         collider = new Rectangle(x,y,ancho,alto);
         muertes=0;
         puntos=0;
+        poder=1;
+        numBombas=1;
     }
     public void move(int x,int y){
         int newX = this.x + x*velocidad;
@@ -39,6 +47,25 @@ public class Jugador {
             collider.translate(-x*velocidad, -y*velocidad);
         }
         
+    }
+    public Bomba ponerBomba() {
+        if(numBombas>0){
+            numBombas--;
+            Bomba bomba = new Bomba(x,y,poder);
+            Timer timer = new Timer();
+            TimerTask task = new TimerTask(){
+                @Override
+                public void run() {
+                    escenario.explote(bomba);
+                    numBombas++;
+                    
+                }
+            };
+            timer.schedule(task, 4000);;
+           return  bomba;
+        }else{
+            return null;
+        }
     }
 
     public int getX() {
@@ -104,6 +131,7 @@ public class Jugador {
     public void setVelocidad(int velocidad) {
         this.velocidad = velocidad;
     }
+	
     
 
     

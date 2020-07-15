@@ -31,7 +31,7 @@ public class BombermanParty {
     }
 
     /**
-     * 
+     * Crea una sala nueva con el codigo dado
      */
     public void crearSala(int codigo){
         Sala sala = new Sala(codigo);
@@ -46,7 +46,10 @@ public class BombermanParty {
         Sala sala = salas.get(codigo);
         sala.agregarJugador(nombre,session);
     }
-    public void quitarJugador(String session){
+    /**
+     * Quita el jugador dado el id de su session
+     */
+    public void quitarJugador(Session session){
         for(Sala s: salas.values()){
             s.quitarJugador(session);
         }
@@ -77,10 +80,29 @@ public class BombermanParty {
         Sala sala = salas.get(codigo);
         return sala.getJugadores();
     }
+    /**
+     * Mueve el jugador dado de la sala dada a la posición x, y
+     * @param codigo Codigo de la sala
+     * @param nombre nombre del jugador
+     * @param x posición en x
+     * @param y posición en y
+     */
     public void moverJugador(int codigo,String nombre,int x, int y){
         Sala sala = salas.get(codigo);
         sala.moverJugador(nombre, x, y);
     }
+    public void ponerBomba(int codigo,String nombre){
+        System.out.println("BP");
+        Sala sala = salas.get(codigo);
+        sala.ponerBomba(nombre);
+
+    }
+    public List<Bomba> getBombas(int codigo){
+        Sala sala = salas.get(codigo);
+        return sala.getBombas();
+    }
+
+
     public Sala getSala(int id){
         return salas.get(id);
     }

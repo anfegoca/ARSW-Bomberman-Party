@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.stereotype.Component;
 
+import co.edu.escuelaing.arsw.bombermanparty.aplicacion.Bomba;
 import co.edu.escuelaing.arsw.bombermanparty.aplicacion.BombermanParty;
 import co.edu.escuelaing.arsw.bombermanparty.aplicacion.Fijo;
 import co.edu.escuelaing.arsw.bombermanparty.aplicacion.Jugador;
@@ -38,68 +39,9 @@ public class BBEndpoint {
     BombermanParty bp = BombermanParty.getInstance();
     Session ownSession = null;
 
-    /* Call this method to send a message to all clients */
-    public void send(String msg, int sala) {
-        try {
-            /* Send updates to all open WebSocket sessions */
-            for (Session session : queue) {
-                if (!session.equals(this.ownSession)) {
-                    session.getBasicRemote().sendText(msg);
-                }
-                logger.log(Level.INFO, "Sent: {0}", msg);
-            }
-        } catch (IOException e) {
-            logger.log(Level.INFO, e.toString());
-        }
-    }
 
-    public void getFijos(Session session,int sala) {
-        try {
-            ObjectMapper map = new ObjectMapper();
-            List<Fijo> fijos = bp.getFijos(sala);
-            String json = map.writeValueAsString(fijos);
-            session.getBasicRemote().sendText("Fijo/" + json);
-        } catch (JsonProcessingException ex) {
-            logger.log(Level.SEVERE, null, ex);
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, null, e);
-        }
-    }
+    
 
-    public void getJugadores(Session session, int sala) {
-        try {
-            ObjectMapper map = new ObjectMapper();
-            List<Jugador> jugadores = bp.getJugadores(sala);
-            String json = map.writeValueAsString(jugadores);
-            session.getBasicRemote().sendText("Jug/" + json);
-        } catch (JsonProcessingException ex) {
-            logger.log(Level.SEVERE, null, ex);
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, null, e);
-        }
-    }
-    public void getTemporales(Session session, int sala){
-        try {
-            ObjectMapper map = new ObjectMapper();
-            List<Temporal> temporales = bp.getTemporales(sala);
-            String json = map.writeValueAsString(temporales);
-            session.getBasicRemote().sendText("Temp/" + json);
-        } catch (JsonProcessingException ex) {
-            logger.log(Level.SEVERE, null, ex);
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, null, e);
-        }
-    }
-    public void moverJugadores(int id){
-        Sala sala = bp.getSala(id);
-        for(String i: sala.getSessions().keySet()){
-            for(Session s: queue){
-                if(i.equals(s.getId())){
-                    getJugadores(s, id);
-                }
-            }
-        }
-    }
 
     @OnMessage
     public void processPoint(String message, Session session) {
@@ -110,9 +52,9 @@ public class BBEndpoint {
             Integer id = Integer.parseInt(msg[1]);
             try {
                 bp.agregarJugador(id, msg[2], session);
-                getTemporales(session, id);
-                getFijos(session, id);
-                moverJugadores(id);
+                //getTemporales(session, id);
+                //getFijos(session, id);
+                //moverJugadores(id);
             } catch (BombermanPartyException e) {
                 System.out.println(e);
             }
@@ -121,7 +63,11 @@ public class BBEndpoint {
             Integer x = Integer.parseInt(msg[3]);
             Integer y = Integer.parseInt(msg[4]);
             bp.moverJugador(id, msg[2], x, y);
-            moverJugadores(id);
+            //moverJugadores(id);
+        }else if("bom".equals(msg[0])){
+            Integer id = Integer.parseInt(msg[1]);
+            bp.ponerBomba(id, msg[2]);
+            
         }
 
     }
@@ -134,7 +80,6 @@ public class BBEndpoint {
         ownSession = session;
         logger.log(Level.INFO, "Connection opened.");
         try {
-
             session.getBasicRemote().sendText("Connection established.");
 
         } catch (IOException ex) {
@@ -146,7 +91,7 @@ public class BBEndpoint {
     public void closedConnection(Session session) {
         /* Remove this connection from the queue */
         // sessionRepo.removeSession(session);
-        bp.quitarJugador(session.getId());
+        bp.quitarJugador(session);
         queue.remove(session);
         
         logger.log(Level.INFO, "Connection closed for session " + session);
