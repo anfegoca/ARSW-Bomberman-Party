@@ -9,10 +9,11 @@ public class Fuego {
     private int alto;
     private Rectangle collider;
     private char tipo;
+    private String dueño;
     
 
-    public Fuego(int x,int y, char tipo){
-        
+    public Fuego(int x,int y, char tipo,String dueño){
+        this.dueño=dueño;
         this.tipo=tipo;
         this.x=x;
         this.y=y;
@@ -27,7 +28,9 @@ public class Fuego {
         }
         return res;
     }
- 
+    public Rectangle Obtcollider(){
+        return collider;
+    }
 
     public int getX() {
         return x;
@@ -67,6 +70,14 @@ public class Fuego {
 
     public void setTipo(char tipo) {
         this.tipo = tipo;
+    }
+
+    public String getDueño() {
+        return dueño;
+    }
+
+    public void setDueño(String dueño) {
+        this.dueño = dueño;
     }
 
     

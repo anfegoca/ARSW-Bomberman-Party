@@ -88,7 +88,7 @@ class Fuego extends React.Component {
         }
 
         render() {
-                
+
                 return (
                         <img src={"../images/explosion" + this.props.tipo + ".png"}
                                 style={{ width: this.state.zoom * this.props.w, height: this.state.zoom * this.props.h, position: 'absolute', top: this.state.zoom * this.props.y, left: this.state.zoom * this.props.x }}
@@ -109,13 +109,9 @@ class Bomba extends React.Component {
         render() {
 
                 return (
-
-
-
                         <img src="../images/bomba.png"
                                 style={{ width: this.state.zoom * this.props.w, height: this.state.zoom * this.props.h, position: 'absolute', top: this.state.zoom * this.props.y, left: this.state.zoom * this.props.x }}
                         ></img>
-
 
                 );
         }
@@ -138,19 +134,27 @@ class BloqueFijo extends React.Component {
         }
 }
 class Jugador extends React.Component {
-        constructor() {
-                super();
+        constructor(props) {
+                super(props);
                 this.state = {
                         zoom: 3,
+                        colores: ["red","blue","orange","green"],
                 };
         }
 
 
         render() {
                 return (
-                        <img src="../images/jugador.png"
-                                style={{ width: this.state.zoom * this.props.w, height: this.state.zoom * this.props.h, position: 'absolute', top: this.state.zoom * this.props.y, left: this.state.zoom * this.props.x }}
-                        ></img>
+                        <div>
+                                <div style={{ color: "white", background: this.state.colores[this.props.num] , marginLeft: 700, marginRight: 1000 }}>
+                                        <div> {this.props.nombre}</div>
+                                <div> {this.props.puntos+"/"+ this.props.muertes}</div>
+
+                                </div>
+                                <img src="../images/jugador.png"
+                                        style={{ width: this.state.zoom * this.props.w, height: this.state.zoom * this.props.h, position: 'absolute', top: this.state.zoom * this.props.y, left: this.state.zoom * this.props.x }}
+                                ></img>
+                        </div>
                 );
         }
 }
@@ -275,7 +279,7 @@ class Escenario extends React.Component {
                 })
                 const jugadores = this.state.jugadores.map((jugador, i) => {
                         return (
-                                <Jugador key={jugador.nombre} x={jugador.x} y={jugador.y} w={jugador.ancho} h={jugador.alto}></Jugador>
+                                <Jugador key={i} num={i} nombre={jugador.nombre} x={jugador.x} y={jugador.y} w={jugador.ancho} h={jugador.alto} puntos={jugador.puntos} muertes={jugador.muertes}></Jugador>
 
                         )
                 })

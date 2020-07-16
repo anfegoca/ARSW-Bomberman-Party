@@ -142,6 +142,12 @@ public class Escenario {
                 break;
             }
         }
+        for(Bomba bo: bombas){
+            if(bo.choca(collider)){
+                res=true;
+                break;
+            }
+        }
         return res;
     }
     public boolean collisionFijo(Rectangle collider){
@@ -212,11 +218,28 @@ public class Escenario {
     public void destruirBloque(Fuego fuego) {
         // System.out.println("X: "+x+" Y: "+y );
         for (Temporal t : temporales) {
-            if (t.getX()==fuego.getX() && t.getY() == fuego.getY()) {
-                
+            if (t.choca(fuego.Obtcollider())) {
                 temporales.remove(t);
                 bloques.remove(t);
                 break;
+            }
+        }
+    }
+    public void SumarPuntos(Fuego fuego){
+        for(Jugador j: jugadores){
+            if (j.choca(fuego.Obtcollider())) {
+                j.muerase();
+                sala.actualizarObjetos("Jug", getJugadores());
+                if(!fuego.getDueño().equals(j.getNombre())){
+                    for(Jugador jug: jugadores){
+                        if(fuego.getDueño().equals(jug.getNombre())){
+                            jug.setPuntos(jug.getPuntos()+1);
+                        }
+                    }
+
+                }
+                
+                
             }
         }
     }

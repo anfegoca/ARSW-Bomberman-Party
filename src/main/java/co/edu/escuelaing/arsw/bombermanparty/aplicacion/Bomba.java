@@ -1,5 +1,6 @@
 package co.edu.escuelaing.arsw.bombermanparty.aplicacion;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -17,9 +18,12 @@ public class Bomba {
     private boolean explosion;
     private Escenario escenario;
     private ArrayList<Fuego> fuegos;
+    private String dueño;
+    private Rectangle collider;
 
     
-    public Bomba(int x, int y, int impacto, Escenario escenario){
+    public Bomba(int x, int y, int impacto, Escenario escenario,String nombre){
+        this.dueño=nombre;
         this.escenario=escenario;
         this.x=x;
         this.y=y;
@@ -28,12 +32,14 @@ public class Bomba {
         alto = 10;
         explosion=false;
         fuegos = new ArrayList<>();
+        collider = new Rectangle(x,y,ancho,alto);
     }
 
     public void explote(){
-        Fuego fuego = new Fuego(x, y, 'C');
+        Fuego fuego = new Fuego(x, y, 'C',dueño);
         fuegos.add(fuego);
         escenario.addFuego(fuego);
+        escenario.SumarPuntos(fuego);
         int[] posx = { -10, 0, 10, 0 };
         int[] posy = { 0, 10, 0, -10 };
         ArrayList<Integer> lados = new ArrayList<>();
@@ -42,15 +48,16 @@ public class Bomba {
                 if(!lados.contains(j)){
 
                 if(j%2==0){
-                     fuego = new Fuego(x+posx[j]*(i+1), y+posy[j]*(i+1),'H');
+                     fuego = new Fuego(x+posx[j]*(i+1), y+posy[j]*(i+1),'H',dueño);
                 }else{
-                     fuego = new Fuego(x+posx[j]*(i+1), y+posy[j]*(i+1),'V');
+                     fuego = new Fuego(x+posx[j]*(i+1), y+posy[j]*(i+1),'V',dueño);
                 }
                 
                 if(fuego.choca(escenario)){
                     fuegos.add(fuego);
                     escenario.addFuego(fuego);
                     escenario.destruirBloque(fuego);
+                    escenario.SumarPuntos(fuego);
                 }else{
                     lados.add(j);
                 }
@@ -116,6 +123,10 @@ public class Bomba {
     public void setFuegos(ArrayList<Fuego> fuegos) {
         this.fuegos = fuegos;
     }
+
+	public boolean choca(Rectangle collider) {
+		return this.collider.intersects(collider);
+	}
     
     
 }

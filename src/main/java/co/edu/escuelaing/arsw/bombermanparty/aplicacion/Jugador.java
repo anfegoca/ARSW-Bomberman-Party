@@ -21,10 +21,14 @@ public class Jugador {
     private Rectangle collider;
     private int poder;
     private int numBombas;
+    private int xi;
+    private int yi;
 
     public Jugador(Escenario escenario, String nombre, int x,int y) {
         this.escenario = escenario;
         this.nombre = nombre;
+        this.xi=x;
+        this.yi=y;
         this.x=x;
         this.y=y;
         this.alto=10;
@@ -51,7 +55,7 @@ public class Jugador {
     public Bomba ponerBomba() {
         if(numBombas>0){
             numBombas--;
-            Bomba bomba = new Bomba(x,y,poder,escenario);
+            Bomba bomba = new Bomba(x,y,poder,escenario,nombre);
             Timer timer = new Timer();
             TimerTask task = new TimerTask(){
                 @Override
@@ -120,7 +124,9 @@ public class Jugador {
     public int getAlto() {
         return alto;
     }
-
+    public boolean choca(Rectangle r){
+        return collider.intersects(r);
+    }
     public void setAlto(int alto) {
         this.alto = alto;
     }
@@ -132,6 +138,12 @@ public class Jugador {
     public void setVelocidad(int velocidad) {
         this.velocidad = velocidad;
     }
+	public void muerase() {
+        muertes++;
+        x=xi;
+        y=yi;
+        collider = new Rectangle(x,y,ancho,alto);
+	}
 	
     
 
