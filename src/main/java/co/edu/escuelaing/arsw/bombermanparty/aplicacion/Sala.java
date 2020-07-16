@@ -71,13 +71,24 @@ public class Sala {
 	}
 
 	public void ponerBomba(String nombre) {
-        System.out.println("SALA");
+        
         escenario.ponerBomba(nombre);
         actualizarObjetos("Bomb",escenario.getBombas());
     }
     public List<Bomba> getBombas(){
         return escenario.getBombas();
     }
+
+	public void explote(int indexOf) {
+        for(Session s: sessions.keySet()){
+            try {
+                s.getBasicRemote().sendText("Exp/" + indexOf);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+	}
     
 
 

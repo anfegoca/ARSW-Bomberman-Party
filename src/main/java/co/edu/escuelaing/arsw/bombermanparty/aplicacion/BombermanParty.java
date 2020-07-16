@@ -92,7 +92,7 @@ public class BombermanParty {
         sala.moverJugador(nombre, x, y);
     }
     public void ponerBomba(int codigo,String nombre){
-        System.out.println("BP");
+        
         Sala sala = salas.get(codigo);
         sala.ponerBomba(nombre);
 

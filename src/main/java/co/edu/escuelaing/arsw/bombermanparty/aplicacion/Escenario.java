@@ -3,6 +3,8 @@ package co.edu.escuelaing.arsw.bombermanparty.aplicacion;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.awt.Rectangle;
 
 import co.edu.escuelaing.arsw.bombermanparty.exeptions.BombermanPartyException;
@@ -21,9 +23,10 @@ public class Escenario {
     private ArrayList<Jugador> jugadores;
     private ArrayList<Bomba> bombas;
     private Rectangle collider;
+    private ArrayList<Fuego> fuegos;
 
     public Escenario(Sala sala) {
-        this.sala=sala;
+        this.sala = sala;
         ancho = 200;
         alto = 200;
         bloques = new ArrayList<>();
@@ -31,6 +34,7 @@ public class Escenario {
         temporales = new ArrayList<>();
         jugadores = new ArrayList<>();
         bombas = new ArrayList<>();
+        fuegos = new ArrayList<>();
         collider = new Rectangle(0, 0, ancho + 10, alto + 10);
         prepareBloquesFijos();
         prepareBloquesTemporales();
@@ -140,6 +144,16 @@ public class Escenario {
         }
         return res;
     }
+    public boolean collisionFijo(Rectangle collider){
+        boolean res = false;
+        for(Fijo f: fijos){
+            if(f.choca(collider)){
+                res = true;
+                break;
+            }
+        }
+        return res;
+    }
 
     public int getAncho() {
         return ancho;
@@ -178,13 +192,14 @@ public class Escenario {
         for (Jugador j : jugadores) {
             if (j.getNombre().equals(nombre)) {
                 Bomba bomba = j.ponerBomba();
-                if(bomba!=null){
+                if (bomba != null) {
                     bombas.add(bomba);
                 }
                 break;
             }
         }
     }
+    
 
     public List<Bomba> getBombas() {
         return bombas;
@@ -194,11 +209,11 @@ public class Escenario {
         this.bombas = bombas;
     }
 
-    public void destruirBloque(int x, int y) {
-        //System.out.println("X: "+x+" Y: "+y );
+    public void destruirBloque(Fuego fuego) {
+        // System.out.println("X: "+x+" Y: "+y );
         for (Temporal t : temporales) {
-            if (t.getX() == x && t.getY() == y) {
-                System.out.println("Temporal");
+            if (t.getX()==fuego.getX() && t.getY() == fuego.getY()) {
+                
                 temporales.remove(t);
                 bloques.remove(t);
                 break;
@@ -207,20 +222,39 @@ public class Escenario {
     }
 
     public void explote(Bomba bomba) {
-        //System.out.println("BOMB");
-        
-        int[] posx = { -10, 0, 10, 0 };
-        int[] posy = { 0, 10, 0, -10 };
-        for (int i = 0; i < bomba.getImpacto(); i++) {
-            for (int j = 0; j < 4; j++) {
-                destruirBloque(bomba.getX() + posx[j] * (i + 1), bomba.getY() + posy[j] * (i + 1));
-            }
-        }
+        // System.out.println("BOMB");
+        // sala.explote(bombas.indexOf(bomba));
+        sala.actualizarObjetos("Fueg", getFuegos());
         bombas.remove(bomba);
         sala.actualizarObjetos("Bomb", getBombas());
         sala.actualizarObjetos("Temp", getTemporales());
+        Timer timer = new Timer();
+        TimerTask t = new TimerTask(){
+
+            @Override
+            public void run() {
+                fuegos.removeAll(bomba.getFuegos());
+                sala.actualizarObjetos("Fueg", getFuegos());
+
+            }
+            
+        };
+        timer.schedule(t, 500);
+        
 
 
+    }
+    public void addFuego(Fuego fuego){
+        fuegos.add(fuego);
+
+    }
+
+    public ArrayList<Fuego> getFuegos() {
+        return fuegos;
+    }
+
+    public void setFuegos(ArrayList<Fuego> fuegos) {
+        this.fuegos = fuegos;
     }
 
 }

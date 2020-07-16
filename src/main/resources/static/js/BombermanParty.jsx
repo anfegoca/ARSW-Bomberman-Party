@@ -7,7 +7,7 @@ function BBServiceURL() {
 
 
 class WSBBChannel {
-        constructor(URL, callback,sala,user) {
+        constructor(URL, callback, sala, user) {
                 this.URL = URL;
                 this.wsocket = new WebSocket(URL);
                 this.wsocket.onopen = (evt) => this.onOpen(evt);
@@ -41,18 +41,18 @@ class WSBBChannel {
         }
 
         agregarJugador() {
-                let msg = "addJugador" + " " +(this.sala)+" "+(this.user);
-                console.log("agregando jugador.. "+"Sala: "+this.sala+" User: "+this.user);
+                let msg = "addJugador" + " " + (this.sala) + " " + (this.user);
+                console.log("agregando jugador.. " + "Sala: " + this.sala + " User: " + this.user);
                 this.wsocket.send(msg);
         }
-        move(x,y){
-                let msg = "mov" + " " + (this.sala) + " " + (this.user) + " " + (x)+ " " + (y);
+        move(x, y) {
+                let msg = "mov" + " " + (this.sala) + " " + (this.user) + " " + (x) + " " + (y);
                 console.log("sending: ", msg);
                 this.wsocket.send(msg);
         }
-        colocarBomba(){
-                let msg = "bom" +" "+(this.sala)+" "+(this.user);
-                console.log("sending: ",msg);
+        colocarBomba() {
+                let msg = "bom" + " " + (this.sala) + " " + (this.user);
+                console.log("sending: ", msg);
                 this.wsocket.send(msg);
         }
         send(tipo, sala, jugador, mov) {
@@ -79,7 +79,7 @@ class BloqueTemporal extends React.Component {
                 );
         }
 }
-class Bomba extends React.Component {
+class Fuego extends React.Component {
         constructor() {
                 super();
                 this.state = {
@@ -88,10 +88,35 @@ class Bomba extends React.Component {
         }
 
         render() {
+                
                 return (
+                        <img src={"../images/explosion" + this.props.tipo + ".png"}
+                                style={{ width: this.state.zoom * this.props.w, height: this.state.zoom * this.props.h, position: 'absolute', top: this.state.zoom * this.props.y, left: this.state.zoom * this.props.x }}
+                        ></img>
+                );
+        }
+}
+class Bomba extends React.Component {
+        constructor(props) {
+                super(props);
+                this.state = {
+
+                        zoom: 3,
+
+                };
+        }
+
+        render() {
+
+                return (
+
+
+
                         <img src="../images/bomba.png"
                                 style={{ width: this.state.zoom * this.props.w, height: this.state.zoom * this.props.h, position: 'absolute', top: this.state.zoom * this.props.y, left: this.state.zoom * this.props.x }}
                         ></img>
+
+
                 );
         }
 }
@@ -136,18 +161,20 @@ class Escenario extends React.Component {
                         new WSBBChannel(BBServiceURL(),
                                 (msg) => {
                                         console.log("On func call back ", msg);
-                                        if(msg[0]==="Temp"){
+                                        if (msg[0] === "Temp") {
                                                 this.prepararBloquesTemporales(msg[1]);
-                                        }else if(msg[0]==="Fijo"){
+                                        } else if (msg[0] === "Fijo") {
                                                 this.prepararBloqueFijos(msg[1]);
-                                        }else if(msg[0]==="Jug"){
+                                        } else if (msg[0] === "Jug") {
                                                 this.mostrarJugadores(msg[1]);
-                                        }else if(msg[0]==="Bomb"){
+                                        } else if (msg[0] === "Bomb") {
                                                 this.mostrarBombas(msg[1]);
+                                        } else if (msg[0] === "Fueg") {
+                                                this.mostrarFuegos(msg[1]);
                                         }
-                                        
+
                                 }
-                                ,this.props.sala,this.props.user);
+                                , this.props.sala, this.props.user);
                 this.state = {
                         wsreference: this.comunicationWS,
                         zoom: 3,
@@ -157,18 +184,11 @@ class Escenario extends React.Component {
                         bloquesTemporales: [],
                         jugadores: [],
                         bombas: [],
+                        fuegos: [],
                 };
         }
         componentDidMount() {
-                //this.agregarJugador();
-                //this.prepararBloqueFijos();
-                //this.prepararBloquesTemporales();
-                //this.mostrarJugadores();
                 this.eventos();
-                //this.timerID = setInterval(
-                //        () => this.actualizar(),
-                //        1000
-                //);
 
         }
         eventos() {
@@ -176,17 +196,17 @@ class Escenario extends React.Component {
                         const keyName = event.key;
                         console.log('keydown event\n\n' + 'key: ' + keyName);
                         if (keyName === "ArrowUp") {
-                                this.moverJugador(0, -5);
+                                this.moverJugador(0, -10);
 
                         } else if (keyName === "ArrowDown") {
-                                this.moverJugador(0, 5);
+                                this.moverJugador(0, 10);
 
                         } else if (keyName === "ArrowLeft") {
-                                this.moverJugador(-5, 0);
+                                this.moverJugador(-10, 0);
 
                         } else if (keyName === "ArrowRight") {
-                                this.moverJugador(5, 0);
-                        } else if (keyName === " "){
+                                this.moverJugador(10, 0);
+                        } else if (keyName === " ") {
                                 this.colocarBomba();
                         }
                 });
@@ -195,20 +215,27 @@ class Escenario extends React.Component {
                 this.mostrarJugadores();
 
         }
-        colocarBomba(){
+        colocarBomba() {
                 this.state.wsreference.colocarBomba();
-                
+
         }
-        mostrarBombas(bombas){
+        mostrarBombas(bombas) {
                 var obj = JSON.parse(bombas);
                 this.setState({
                         bombas: obj
                 });
 
         }
+        mostrarFuegos(fuegos) {
+                var obj = JSON.parse(fuegos);
+                this.setState({
+                        fuegos: obj
+                });
+        }
+
         moverJugador(x, y) {
                 console.log("Mover" + x + " " + y + " " + this.props.user + " " + this.props.sala);
-                this.state.wsreference.move(x,y);
+                this.state.wsreference.move(x, y);
         }
 
         prepararBloqueFijos(bloques) {
@@ -223,7 +250,7 @@ class Escenario extends React.Component {
                 this.setState({
                         bloquesTemporales: obj
                 });
-                
+
         }
         mostrarJugadores(jugadores) {
                 var obj = JSON.parse(jugadores);
@@ -254,20 +281,27 @@ class Escenario extends React.Component {
                 })
                 const bombas = this.state.bombas.map((bomba, i) => {
                         return (
-                                <Bomba key={i} x={bomba.x} y={bomba.y} w={bomba.ancho} h={bomba.alto}></Bomba>
+                                <Bomba key={i} x={bomba.x} y={bomba.y} w={bomba.ancho} h={bomba.alto} impacto={bomba.impacto} explosion={bomba.explosion}></Bomba>
+
+                        )
+                })
+                const fuegos = this.state.fuegos.map((fuego, i) => {
+                        return (
+                                <Fuego key={i} x={fuego.x} y={fuego.y} w={fuego.ancho} h={fuego.alto} tipo={fuego.tipo}></Fuego>
 
                         )
                 })
                 return (
                         <div>
                                 <img src="../images/fondo.jpg"
-                                        style={{ width: this.state.ancho + 30, height: this.state.alto + 30, position: 'absolute',top: 0, left: 0 }}
+                                        style={{ width: this.state.ancho + 30, height: this.state.alto + 30, position: 'absolute', top: 0, left: 0 }}
                                 >
                                 </img>
                                 {bloquesF}
                                 {bloquesT}
                                 {jugadores}
                                 {bombas}
+                                {fuegos}
 
                         </div>
 
@@ -324,7 +358,7 @@ class MyForm extends React.Component {
                                 </form>
 
                                 {this.state.visible ? <Escenario sala={this.state.sala} user={this.state.username} /> : null}
-                                
+
                         </div>
                 );
         }

@@ -51,11 +51,12 @@ public class Jugador {
     public Bomba ponerBomba() {
         if(numBombas>0){
             numBombas--;
-            Bomba bomba = new Bomba(x,y,poder);
+            Bomba bomba = new Bomba(x,y,poder,escenario);
             Timer timer = new Timer();
             TimerTask task = new TimerTask(){
                 @Override
                 public void run() {
+                    bomba.explote();
                     escenario.explote(bomba);
                     numBombas++;
                     
