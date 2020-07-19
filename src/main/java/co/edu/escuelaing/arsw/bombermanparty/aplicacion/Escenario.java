@@ -197,7 +197,7 @@ public class Escenario {
      */
     public void ponerBomba(String nombre) {
         for (Jugador j : jugadores) {
-            if (j.getNombre().equals(nombre)) {
+            if (j.getNombre().equals(nombre) && !hayBomba(j.getcol())) {
                 Bomba bomba = j.ponerBomba();
                 if (bomba != null) {
                     bombas.add(bomba);
@@ -205,6 +205,22 @@ public class Escenario {
                 break;
             }
         }
+    }
+    /**
+     * Indica si hay una bomba en el rectangle dado
+     * @param jugador Rectangle el cual se quiere comprobar
+     * @return boolean true si hay una bomba en la misma posición
+     */
+    public boolean hayBomba(Rectangle jugador){
+        boolean res= true;
+        for(Bomba b: bombas){
+            if(b.choca(jugador)){
+                res = true;
+                break;
+            }
+        }
+        return res;
+
     }
     
 
