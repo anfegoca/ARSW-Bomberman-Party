@@ -212,7 +212,7 @@ public class Escenario {
      * @return boolean true si hay una bomba en la misma posición
      */
     public boolean hayBomba(Rectangle jugador){
-        boolean res= true;
+        boolean res= false;
         for(Bomba b: bombas){
             if(b.choca(jugador)){
                 res = true;
