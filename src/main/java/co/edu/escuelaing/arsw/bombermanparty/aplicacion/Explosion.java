@@ -8,7 +8,11 @@ public class Explosion extends PowerUp {
         super(x, y);
         tipo=this.getClass().getSimpleName();
     }
-
+    /**
+     * Verifica si el jugador dado colisiona con el PowerUp y le da la bonificacion
+     * @param jugador a verificar
+     * @return boolean true si se le dio la bonificación
+     */
     @Override
     public boolean choca(Jugador jugador) {
         boolean res = false;

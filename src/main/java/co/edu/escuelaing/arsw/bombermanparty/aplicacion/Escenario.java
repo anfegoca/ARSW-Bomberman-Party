@@ -133,11 +133,20 @@ public class Escenario {
         }
 
     }
-
+    /**
+     * Indicia si un collider se encuentra en el escenario
+     * @param collider Rectangle del cual se quiere comprar que está dentro del escenario
+     * @return boolean true si está en el escenario
+     */
     public boolean inEscenario(Rectangle collider) {
         return this.collider.contains(collider);
     }
 
+    /**
+     * Indica si un collider colisiona con un bloque o una bomba en el escenario
+     * @param collider Rectangle del objeto que se quiere comprobar
+     * @return boolean true si colisiona
+     */
     public boolean colision(Rectangle collider) {
         boolean res = false;
         for (Bloque b : bloques) {
@@ -154,6 +163,11 @@ public class Escenario {
         }
         return res;
     }
+    /**
+     * Indica si un objeto colisiona con un bloque de tipo fijo
+     * @param collider Rectangle del objeto el cual se quiere consultar
+     * @return boolean true si colisionan
+     */
     public boolean collisionFijo(Rectangle collider){
         boolean res = false;
         for(Fijo f: fijos){
@@ -165,6 +179,147 @@ public class Escenario {
         return res;
     }
 
+    /**
+     * Quita a un jugar del escenario
+     * @param nombre del jugador que se quiere retirar del escenario
+     */
+    public void quitarJugador(String nombre) {
+        for (Jugador j : jugadores) {
+            if (j.getNombre().equals(nombre)) {
+                jugadores.remove(j);
+                break;
+            }
+        }
+    }
+    /**
+     * Hace que el jugador con el nombre dado coloque una bomba en su posición
+     * @param nombre del jugador el cual va a colocar la bomba
+     */
+    public void ponerBomba(String nombre) {
+        for (Jugador j : jugadores) {
+            if (j.getNombre().equals(nombre)) {
+                Bomba bomba = j.ponerBomba();
+                if (bomba != null) {
+                    bombas.add(bomba);
+                }
+                break;
+            }
+        }
+    }
+    
+
+    /**
+     * Genera un PowerUp aleatorio en la posición dada
+     * @param x posicion en x
+     * @param y posicion en y
+     */
+    public void generarPowerUp(int x,int y){
+        Random r = new Random();
+        int num = r.nextInt(4);
+        if(num==0){
+            PowerUps[] tipos = PowerUps.values();
+            int sor = r.nextInt(tipos.length);
+            System.out.println("Se genero "+tipos[sor]);
+            powerUps.add(fabrica.create(tipos[sor], x, y));
+        }
+    }
+
+    /**
+     * Destruye el bloque el cual colisione con el fuego dado
+     * @param fuego con el cual se quiere destruir un bloque
+     */
+    public void destruirBloque(Fuego fuego) {
+        for (Temporal t : temporales) {
+            if (t.choca(fuego.Obtcollider())) {
+                temporales.remove(t);
+                bloques.remove(t);
+                generarPowerUp(t.getX(), t.getY());
+                break;
+            }
+        }
+        
+    }
+    /**
+     * Suma los puntos si el fuego dado colisiona con un jugador
+     * @param fuego el fuego del cual se quiere comprobar si colisiona con un jugador
+     */
+    public void SumarPuntos(Fuego fuego){
+        for(Jugador j: jugadores){
+            if (j.choca(fuego.Obtcollider())) {
+                j.muerase();
+                sala.actualizarObjetos("Jug", getJugadores());
+                if(!fuego.getDueño().equals(j.getNombre())){
+                    for(Jugador jug: jugadores){
+                        if(fuego.getDueño().equals(jug.getNombre())){
+                            jug.setPuntos(jug.getPuntos()+1);
+                        }
+                    }
+
+                }
+                
+                
+            }
+        }
+    }
+    /**
+     * Hace explotar la bomba dada
+     * @param bomba bomba la cual se quiere hacer explotar
+     */
+    public void explote(Bomba bomba) {
+        sala.actualizarObjetos("Fueg", getFuegos());
+        bombas.remove(bomba);
+        sala.actualizarObjetos("Bomb", getBombas());
+        sala.actualizarObjetos("Temp", getTemporales());
+        Timer timer = new Timer();
+        TimerTask t = new TimerTask(){
+
+            @Override
+            public void run() {
+                fuegos.removeAll(bomba.getFuegos());
+                sala.actualizarObjetos("Fueg", getFuegos());
+
+            }
+            
+        };
+        timer.schedule(t, 500);
+        sala.actualizarObjetos("Pow",getPowerUps());
+        
+
+
+    }
+    /**
+     * Agrega el fuego dado al escenario
+     * @param fuego que se quiere agregar al escenario
+     */
+    public void addFuego(Fuego fuego){
+        fuegos.add(fuego);
+
+    }
+
+    /**
+     * Verifica si el jugador dado puede reclamar un PowerUp
+     * @param jugador el cual quiere se quiero comprobar si puede obtener el powerUp
+     */
+	public void reclamarSorpresa(Jugador jugador) {
+        for(PowerUp p: powerUps){
+            if(p.choca(jugador)){
+                powerUps.remove(p);
+                break;
+            }
+            
+        }
+        sala.actualizarObjetos("Pow", getPowerUps());
+    }
+
+    public ArrayList<PowerUp> getPowerUps() {
+        return powerUps;
+    }
+
+    public void setPowerUps(ArrayList<PowerUp> powerUps) {
+        this.powerUps = powerUps;
+    }
+    
+    
     public int getAncho() {
         return ancho;
     }
@@ -188,29 +343,6 @@ public class Escenario {
     public void setJugadores(ArrayList<Jugador> jugadores) {
         this.jugadores = jugadores;
     }
-
-    public void quitarJugador(String nombre) {
-        for (Jugador j : jugadores) {
-            if (j.getNombre().equals(nombre)) {
-                jugadores.remove(j);
-                break;
-            }
-        }
-    }
-
-    public void ponerBomba(String nombre) {
-        for (Jugador j : jugadores) {
-            if (j.getNombre().equals(nombre)) {
-                Bomba bomba = j.ponerBomba();
-                if (bomba != null) {
-                    bombas.add(bomba);
-                }
-                break;
-            }
-        }
-    }
-    
-
     public List<Bomba> getBombas() {
         return bombas;
     }
@@ -218,77 +350,6 @@ public class Escenario {
     public void setBombas(ArrayList<Bomba> bombas) {
         this.bombas = bombas;
     }
-    public void generarPowerUp(int x,int y){
-        Random r = new Random();
-        int num = r.nextInt(4);
-        if(num==0){
-            PowerUps[] tipos = PowerUps.values();
-            int sor = r.nextInt(tipos.length);
-            System.out.println("Se genero "+tipos[sor]);
-            powerUps.add(fabrica.create(tipos[sor], x, y));
-        }
-    }
-
-    public void destruirBloque(Fuego fuego) {
-        // System.out.println("X: "+x+" Y: "+y );
-        for (Temporal t : temporales) {
-            if (t.choca(fuego.Obtcollider())) {
-                temporales.remove(t);
-                bloques.remove(t);
-                generarPowerUp(t.getX(), t.getY());
-                break;
-            }
-        }
-        
-    }
-    public void SumarPuntos(Fuego fuego){
-        for(Jugador j: jugadores){
-            if (j.choca(fuego.Obtcollider())) {
-                j.muerase();
-                sala.actualizarObjetos("Jug", getJugadores());
-                if(!fuego.getDueño().equals(j.getNombre())){
-                    for(Jugador jug: jugadores){
-                        if(fuego.getDueño().equals(jug.getNombre())){
-                            jug.setPuntos(jug.getPuntos()+1);
-                        }
-                    }
-
-                }
-                
-                
-            }
-        }
-    }
-
-    public void explote(Bomba bomba) {
-        // System.out.println("BOMB");
-        // sala.explote(bombas.indexOf(bomba));
-        sala.actualizarObjetos("Fueg", getFuegos());
-        bombas.remove(bomba);
-        sala.actualizarObjetos("Bomb", getBombas());
-        sala.actualizarObjetos("Temp", getTemporales());
-        Timer timer = new Timer();
-        TimerTask t = new TimerTask(){
-
-            @Override
-            public void run() {
-                fuegos.removeAll(bomba.getFuegos());
-                sala.actualizarObjetos("Fueg", getFuegos());
-
-            }
-            
-        };
-        timer.schedule(t, 500);
-        sala.actualizarObjetos("Pow",getPowerUps());
-        
-
-
-    }
-    public void addFuego(Fuego fuego){
-        fuegos.add(fuego);
-
-    }
-
     public ArrayList<Fuego> getFuegos() {
         return fuegos;
     }
@@ -296,25 +357,5 @@ public class Escenario {
     public void setFuegos(ArrayList<Fuego> fuegos) {
         this.fuegos = fuegos;
     }
-
-	public void reclamarSorpresa(Jugador jugador) {
-        for(PowerUp p: powerUps){
-            if(p.choca(jugador)){
-                powerUps.remove(p);
-                break;
-            }
-            
-        }
-        sala.actualizarObjetos("Pow", getPowerUps());
-    }
-
-    public ArrayList<PowerUp> getPowerUps() {
-        return powerUps;
-    }
-
-    public void setPowerUps(ArrayList<PowerUp> powerUps) {
-        this.powerUps = powerUps;
-    }
-    
 
 }

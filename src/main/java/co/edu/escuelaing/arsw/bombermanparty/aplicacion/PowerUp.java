@@ -20,7 +20,11 @@ public abstract class PowerUp {
         this.y = y;
         this.collider=new Rectangle(x,y,ancho,alto);
     }
-
+    /**
+     * Verifica si el jugador dado colisiona con el PowerUp y le da la bonificacion
+     * @param jugador a verificar
+     * @return boolean true si se le dio la bonificación
+     */
     public abstract boolean choca(Jugador jugador);
     
 

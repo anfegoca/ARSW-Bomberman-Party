@@ -14,7 +14,6 @@ import co.edu.escuelaing.arsw.bombermanparty.exeptions.BombermanPartyException;
 public class Sala {
     private int id;
     private Escenario escenario;
-    //private List<String> sessions = new ArrayList<>();
     private Hashtable<Session, String> sessions;
 
     public Sala(int id) {
@@ -23,6 +22,12 @@ public class Sala {
         this.escenario = new Escenario(this);
     }
 
+    /**
+     * Agrega un jugador a la sala con el nombre dado
+     * @param nombre del jugador que se quiere agragar
+     * @param session del jugador que se quiere agregar
+     * @throws BombermanPartyException Si el escenario ya tiene los 4 jugadores
+     */
     public void agregarJugador(String nombre, Session session) throws BombermanPartyException {
         sessions.put(session,nombre);
         escenario.agregarJugador(nombre);
@@ -30,6 +35,10 @@ public class Sala {
         actualizarObjetos("Temp", escenario.getTemporales());
         actualizarObjetos("Jug", escenario.getJugadores());
     }
+    /**
+     * Quita el jugador dado de la sala
+     * @param session del jugador el cual va a salir de la sala
+     */
     public void quitarJugador(Session session){
         System.out.println("Sala: "+session);
         String name = sessions.get(session);
@@ -37,6 +46,11 @@ public class Sala {
         escenario.quitarJugador(name);
 
     }
+    /**
+     * Informa al cliente para que actualice los objetos dados
+     * @param enc de los objetos los cuales quiere actualizar
+     * @param lista de objetos que quiere actualizar
+     */
     public void actualizarObjetos(String enc, List<?> lista){
         try {
             ObjectMapper map = new ObjectMapper();
@@ -51,6 +65,25 @@ public class Sala {
             System.out.println(e);
         }
     }
+    /**
+     * Mueve el jugador dado a la posicion x y y dadas
+     * @param nombre del jugador de la sala que se quire mover
+     * @param x posición en x a la cual se quiere mover
+     * @param y posición en y a la cual se quiere mover
+     */
+    public void moverJugador(String nombre, int x, int y) {
+        escenario.moverJugador(nombre, x, y);
+        actualizarObjetos("Jug", escenario.getJugadores());
+    }
+    /**
+     * Hace que el jugador dado coloque una bomba esu posicióna actual
+     * @param nombre del jugador el cual quire poner la bomba
+     */
+    public void ponerBomba(String nombre) {
+        
+        escenario.ponerBomba(nombre);
+        actualizarObjetos("Bomb",escenario.getBombas());
+    }
 
 
 	public List<Temporal> getTemporales() {
@@ -64,31 +97,12 @@ public class Sala {
 	public List<Jugador> getJugadores() {
 		return escenario.getJugadores();
 	}
-
-	public void moverJugador(String nombre, int x, int y) {
-        escenario.moverJugador(nombre, x, y);
-        actualizarObjetos("Jug", escenario.getJugadores());
-	}
-
-	public void ponerBomba(String nombre) {
-        
-        escenario.ponerBomba(nombre);
-        actualizarObjetos("Bomb",escenario.getBombas());
-    }
+	
     public List<Bomba> getBombas(){
         return escenario.getBombas();
     }
 
-	public void explote(int indexOf) {
-        for(Session s: sessions.keySet()){
-            try {
-                s.getBasicRemote().sendText("Exp/" + indexOf);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-	}
+	
     
 
 

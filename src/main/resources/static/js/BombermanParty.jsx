@@ -1,6 +1,6 @@
 function BBServiceURL() {
         var host = window.location.host;
-        var url = 'wss://' + (host) + '/bbService';
+        var url = 'ws://' + (host) + '/bbService';
         console.log("URL Calculada: " + url);
         return url;
 }

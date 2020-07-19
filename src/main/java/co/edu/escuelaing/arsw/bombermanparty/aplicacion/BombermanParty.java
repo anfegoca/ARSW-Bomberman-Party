@@ -91,8 +91,12 @@ public class BombermanParty {
         Sala sala = salas.get(codigo);
         sala.moverJugador(nombre, x, y);
     }
+    /**
+     * Hace que el jugador dado de la sala dada coloque una bomba en su posicion actual
+     * @param codigo de la sala
+     * @param nombre del jugador
+     */
     public void ponerBomba(int codigo,String nombre){
-        
         Sala sala = salas.get(codigo);
         sala.ponerBomba(nombre);
 

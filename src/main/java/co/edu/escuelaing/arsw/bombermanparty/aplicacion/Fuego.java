@@ -21,6 +21,11 @@ public class Fuego {
         alto=10;
         collider = new Rectangle(x,y,ancho,alto);
     }
+    /**
+     * Verifica si el fuego se puede colocar en el escenario
+     * @param escenario al cual pertenece el fuego
+     * @return boolean si es posible poner el fuego en esa posicion
+     */
     public boolean choca(Escenario escenario){
         boolean res = false;
         if(escenario.inEscenario(collider) && !escenario.collisionFijo(collider)){

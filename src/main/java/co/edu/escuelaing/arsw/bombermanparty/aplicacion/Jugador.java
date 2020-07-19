@@ -40,6 +40,11 @@ public class Jugador {
         poder=1;
         numBombas=1;
     }
+    /**
+     * Hace mover al jugador si no colisiona con un objeto
+     * @param x posicion en x a la cual se quiere mover
+     * @param y posicion en y a la cual se quiere mover
+     */
     public void move(int x,int y){
         int newX = this.x + x*velocidad;
         int newY = this.y + y*velocidad;
@@ -53,6 +58,10 @@ public class Jugador {
         escenario.reclamarSorpresa(this);
         
     }
+    /**
+     * Hace que el jugador coloque una bomba en su posición actual
+     * @return Bomba la bomba que colocó
+     */
     public Bomba ponerBomba() {
         if(numBombas>0){
             numBombas--;
@@ -72,6 +81,28 @@ public class Jugador {
         }else{
             return null;
         }
+    }
+    /**
+     * Hace que el jugador se muera aumentando una muerte a su contador de muertes
+     * y haciendo que su posición vuelva a ser la inicial
+     */
+    public void muerase() {
+        muertes++;
+        x=xi;
+        y=yi;
+        collider = new Rectangle(x,y,ancho,alto);
+    }
+    /**
+     * Aumenta el poder de impacto de las bombas colocadas por el jugador en 1
+     */
+    public void aumentarPoder(){
+        poder++;
+    }
+    /**
+     * Aumenta el numero de bombas que puede colocar el jugador en 1
+     */
+    public void aumentarBombas(){
+        numBombas++;
     }
 
     public int getX() {
@@ -139,18 +170,7 @@ public class Jugador {
     public void setVelocidad(int velocidad) {
         this.velocidad = velocidad;
     }
-	public void muerase() {
-        muertes++;
-        x=xi;
-        y=yi;
-        collider = new Rectangle(x,y,ancho,alto);
-    }
-    public void aumentarPoder(){
-        poder++;
-    }
-    public void aumentarBombas(){
-        numBombas++;
-    }
+	
 	
     
 

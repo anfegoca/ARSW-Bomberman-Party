@@ -2,8 +2,6 @@ package co.edu.escuelaing.arsw.bombermanparty.aplicacion;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  *
@@ -35,6 +33,9 @@ public class Bomba {
         collider = new Rectangle(x,y,ancho,alto);
     }
 
+    /**
+     * Hace esplotar la bomba y genera los Fuegos
+     */
     public void explote(){
         Fuego fuego = new Fuego(x, y, 'C',dueño);
         fuegos.add(fuego);
