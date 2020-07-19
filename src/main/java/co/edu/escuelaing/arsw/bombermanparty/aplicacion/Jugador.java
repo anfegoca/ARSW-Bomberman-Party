@@ -104,7 +104,7 @@ public class Jugador {
     public void aumentarBombas(){
         numBombas++;
     }
-    public Rectangle getcol(){
+    public Rectangle obtRec(){
         return collider;
     }
 

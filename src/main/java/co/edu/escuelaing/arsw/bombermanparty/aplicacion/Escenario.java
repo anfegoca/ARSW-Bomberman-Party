@@ -197,7 +197,7 @@ public class Escenario {
      */
     public void ponerBomba(String nombre) {
         for (Jugador j : jugadores) {
-            if (j.getNombre().equals(nombre) && !hayBomba(j.getcol())) {
+            if (j.getNombre().equals(nombre) && !hayBomba(j.obtRec())) {
                 Bomba bomba = j.ponerBomba();
                 if (bomba != null) {
                     bombas.add(bomba);
