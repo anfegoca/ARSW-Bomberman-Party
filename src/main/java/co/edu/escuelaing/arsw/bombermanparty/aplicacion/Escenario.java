@@ -24,6 +24,8 @@ public class Escenario {
     private ArrayList<Bomba> bombas;
     private Rectangle collider;
     private ArrayList<Fuego> fuegos;
+    private PowerUpFactory fabrica;
+    private ArrayList<PowerUp> powerUps;
 
     public Escenario(Sala sala) {
         this.sala = sala;
@@ -35,7 +37,9 @@ public class Escenario {
         jugadores = new ArrayList<>();
         bombas = new ArrayList<>();
         fuegos = new ArrayList<>();
+        powerUps = new ArrayList<>();
         collider = new Rectangle(0, 0, ancho + 10, alto + 10);
+        fabrica=new PowerUpFactory();
         prepareBloquesFijos();
         prepareBloquesTemporales();
 
@@ -214,6 +218,16 @@ public class Escenario {
     public void setBombas(ArrayList<Bomba> bombas) {
         this.bombas = bombas;
     }
+    public void generarPowerUp(int x,int y){
+        Random r = new Random();
+        int num = r.nextInt(4);
+        if(num==0){
+            PowerUps[] tipos = PowerUps.values();
+            int sor = r.nextInt(tipos.length);
+            System.out.println("Se genero "+tipos[sor]);
+            powerUps.add(fabrica.create(tipos[sor], x, y));
+        }
+    }
 
     public void destruirBloque(Fuego fuego) {
         // System.out.println("X: "+x+" Y: "+y );
@@ -221,9 +235,11 @@ public class Escenario {
             if (t.choca(fuego.Obtcollider())) {
                 temporales.remove(t);
                 bloques.remove(t);
+                generarPowerUp(t.getX(), t.getY());
                 break;
             }
         }
+        
     }
     public void SumarPuntos(Fuego fuego){
         for(Jugador j: jugadores){
@@ -263,6 +279,7 @@ public class Escenario {
             
         };
         timer.schedule(t, 500);
+        sala.actualizarObjetos("Pow",getPowerUps());
         
 
 
@@ -279,5 +296,25 @@ public class Escenario {
     public void setFuegos(ArrayList<Fuego> fuegos) {
         this.fuegos = fuegos;
     }
+
+	public void reclamarSorpresa(Jugador jugador) {
+        for(PowerUp p: powerUps){
+            if(p.choca(jugador)){
+                powerUps.remove(p);
+                break;
+            }
+            
+        }
+        sala.actualizarObjetos("Pow", getPowerUps());
+    }
+
+    public ArrayList<PowerUp> getPowerUps() {
+        return powerUps;
+    }
+
+    public void setPowerUps(ArrayList<PowerUp> powerUps) {
+        this.powerUps = powerUps;
+    }
+    
 
 }

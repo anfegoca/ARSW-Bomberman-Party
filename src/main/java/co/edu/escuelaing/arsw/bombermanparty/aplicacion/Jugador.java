@@ -50,6 +50,7 @@ public class Jugador {
         }else{
             collider.translate(-x*velocidad, -y*velocidad);
         }
+        escenario.reclamarSorpresa(this);
         
     }
     public Bomba ponerBomba() {
@@ -66,7 +67,7 @@ public class Jugador {
                     
                 }
             };
-            timer.schedule(task, 4000);;
+            timer.schedule(task, 3000);;
            return  bomba;
         }else{
             return null;
@@ -143,7 +144,13 @@ public class Jugador {
         x=xi;
         y=yi;
         collider = new Rectangle(x,y,ancho,alto);
-	}
+    }
+    public void aumentarPoder(){
+        poder++;
+    }
+    public void aumentarBombas(){
+        numBombas++;
+    }
 	
     
 

@@ -117,6 +117,27 @@ class Bomba extends React.Component {
         }
 }
 
+class PowerUp extends React.Component {
+        constructor(props) {
+                super(props);
+                this.state = {
+
+                        zoom: 3,
+
+                };
+        }
+
+        render() {
+
+                return (
+                        <img src={"../images/powerUp"+this.props.tipo+".png"}
+                                style={{ width: this.state.zoom * this.props.w, height: this.state.zoom * this.props.h, position: 'absolute', top: this.state.zoom * this.props.y, left: this.state.zoom * this.props.x }}
+                        ></img>
+
+                );
+        }
+}
+
 class BloqueFijo extends React.Component {
         constructor() {
                 super();
@@ -175,6 +196,8 @@ class Escenario extends React.Component {
                                                 this.mostrarBombas(msg[1]);
                                         } else if (msg[0] === "Fueg") {
                                                 this.mostrarFuegos(msg[1]);
+                                        } else if (msg[0] === "Pow"){
+                                                this.mostrarPowerUps(msg[1]);
                                         }
 
                                 }
@@ -189,6 +212,7 @@ class Escenario extends React.Component {
                         jugadores: [],
                         bombas: [],
                         fuegos: [],
+                        powerUps: [],
                 };
         }
         componentDidMount() {
@@ -231,9 +255,16 @@ class Escenario extends React.Component {
 
         }
         mostrarFuegos(fuegos) {
+                console.log("PoweUps");
                 var obj = JSON.parse(fuegos);
                 this.setState({
                         fuegos: obj
+                });
+        }
+        mostrarPowerUps(powerUps) {
+                var obj = JSON.parse(powerUps);
+                this.setState({
+                        powerUps: obj
                 });
         }
 
@@ -295,6 +326,12 @@ class Escenario extends React.Component {
 
                         )
                 })
+                const powerUps = this.state.powerUps.map((powerUp, i) => {
+                        return (
+                                <PowerUp key={i} x={powerUp.x} y={powerUp.y} w={powerUp.ancho} h={powerUp.alto} tipo={powerUp.tipo}></PowerUp>
+
+                        )
+                })
                 return (
                         <div>
                                 <img src="../images/fondo.jpg"
@@ -306,6 +343,7 @@ class Escenario extends React.Component {
                                 {jugadores}
                                 {bombas}
                                 {fuegos}
+                                {powerUps}
 
                         </div>
 
