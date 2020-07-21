@@ -53,3 +53,9 @@ Al volver a jugar se devolverá a los jugadores a la sala de espera.
 ![img5](https://github.com/anfegoca/ARSW-Bomberman-Party/blob/master/resources/diagrama%20aplicacion.png)
 ## Diagrama presentación
 ![img5](https://github.com/anfegoca/ARSW-Bomberman-Party/blob/master/resources/diagrama%20presentaci%C3%B3n.png)
+
+# Tercera entrega
+## Diagrama aplicación
+![img5](https://github.com/anfegoca/ARSW-Bomberman-Party/blob/master/resources/aplicacion.png)
+## Diagrama presentación
+![img5](https://github.com/anfegoca/ARSW-Bomberman-Party/blob/master/resources/presentacion.png)
