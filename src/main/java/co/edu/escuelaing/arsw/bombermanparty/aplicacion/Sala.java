@@ -40,7 +40,6 @@ public class Sala {
      * @param session del jugador el cual va a salir de la sala
      */
     public void quitarJugador(Session session){
-        System.out.println("Sala: "+session);
         String name = sessions.get(session);
         sessions.remove(session);
         escenario.quitarJugador(name);
@@ -51,7 +50,7 @@ public class Sala {
      * @param enc de los objetos los cuales quiere actualizar
      * @param lista de objetos que quiere actualizar
      */
-    public void actualizarObjetos(String enc, List<?> lista){
+    public synchronized void actualizarObjetos(String enc, List<?> lista){
         try {
             ObjectMapper map = new ObjectMapper();
             //List<Fijo> fijos = escenario.getFijos();
@@ -83,6 +82,9 @@ public class Sala {
         
         escenario.ponerBomba(nombre);
         actualizarObjetos("Bomb",escenario.getBombas());
+    }
+    public Escenario obtEsc(){
+        return escenario;
     }
 
 

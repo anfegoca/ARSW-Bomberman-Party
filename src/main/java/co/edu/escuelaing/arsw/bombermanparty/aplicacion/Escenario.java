@@ -231,11 +231,10 @@ public class Escenario {
      */
     public void generarPowerUp(int x,int y){
         Random r = new Random();
-        int num = r.nextInt(4);
+        int num = r.nextInt(9);
         if(num==0){
             PowerUps[] tipos = PowerUps.values();
             int sor = r.nextInt(tipos.length);
-            System.out.println("Se genero "+tipos[sor]);
             powerUps.add(fabrica.create(tipos[sor], x, y));
         }
     }

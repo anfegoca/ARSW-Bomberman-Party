@@ -4,15 +4,12 @@
         <title>Bomberman Party</title>
     </head>
     <body>
+        <script src="js/BombermanParty.jsx" type="text/babel"></script>
         <h1>Bomberman Party</h1>
-        <form >
-            <div><label> Nombre: <input type="text" name="username"/> </label></div>
-            <div><input type="submit" value="Crear Sala"/></div>
-        </form>
-        <form>
-            <div><label> Codigo sala: <input type="text" name="sala"/> </label></div>
-            <div><input type="submit" value="Unirse"/></div>
-        </form>
+        <a th:href="@{/juego}"><button >Create lobby</button></a>
+        <a th:href="@{/juego}"><button >Join to lobby</button></a>
+        <a th:href="@{/crearSala}"><button >How to play</button></a>
+            
     </body>
 
 </html>

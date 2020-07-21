@@ -19,7 +19,6 @@ public class BombermanParty {
     
     private BombermanParty(){
         salas = new Hashtable<>();
-        crearSala(1);
     }
 
     private static class helper {
@@ -33,9 +32,15 @@ public class BombermanParty {
     /**
      * Crea una sala nueva con el codigo dado
      */
-    public void crearSala(int codigo){
-        Sala sala = new Sala(codigo);
-        salas.put(codigo, sala);
+    public boolean crearSala(int codigo){
+        boolean res = false;
+        if(!salas.containsKey(codigo)){
+            Sala sala = new Sala(codigo);
+            salas.put(codigo, sala);
+            res = true;
+        }
+        return res;
+        
     }
     /**
      * Agrega un jugador al escenario
@@ -87,7 +92,7 @@ public class BombermanParty {
      * @param x posición en x
      * @param y posición en y
      */
-    public void moverJugador(int codigo,String nombre,int x, int y){
+    public synchronized void moverJugador(int codigo,String nombre,int x, int y){
         Sala sala = salas.get(codigo);
         sala.moverJugador(nombre, x, y);
     }
@@ -96,7 +101,7 @@ public class BombermanParty {
      * @param codigo de la sala
      * @param nombre del jugador
      */
-    public void ponerBomba(int codigo,String nombre){
+    public synchronized void ponerBomba(int codigo,String nombre){
         Sala sala = salas.get(codigo);
         sala.ponerBomba(nombre);
 

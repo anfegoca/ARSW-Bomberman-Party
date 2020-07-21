@@ -51,12 +51,18 @@ public class BBEndpoint {
         if ("addJugador".equals(msg[0])) {
             Integer id = Integer.parseInt(msg[1]);
             try {
+                bp.crearSala(id);
                 bp.agregarJugador(id, msg[2], session);
                 //getTemporales(session, id);
                 //getFijos(session, id);
                 //moverJugadores(id);
             } catch (BombermanPartyException e) {
-                System.out.println(e);
+                try {
+                    session.getBasicRemote().sendText("est/La sala está llena");
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
             }
         }else if("mov".equals(msg[0])){
             Integer id = Integer.parseInt(msg[1]);

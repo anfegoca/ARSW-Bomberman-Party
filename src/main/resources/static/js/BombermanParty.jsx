@@ -1,3 +1,4 @@
+
 function BBServiceURL() {
         var host = window.location.host;
         var url = 'wss://' + (host) + '/bbService';
@@ -130,7 +131,7 @@ class PowerUp extends React.Component {
         render() {
 
                 return (
-                        <img src={"../images/powerUp"+this.props.tipo+".png"}
+                        <img src={"../images/powerUp" + this.props.tipo + ".png"}
                                 style={{ width: this.state.zoom * this.props.w, height: this.state.zoom * this.props.h, position: 'absolute', top: this.state.zoom * this.props.y, left: this.state.zoom * this.props.x }}
                         ></img>
 
@@ -159,7 +160,7 @@ class Jugador extends React.Component {
                 super(props);
                 this.state = {
                         zoom: 3,
-                        colores: ["red","blue","orange","green"],
+                        colores: ["red", "blue", "orange", "green"],
                 };
         }
 
@@ -167,9 +168,9 @@ class Jugador extends React.Component {
         render() {
                 return (
                         <div>
-                                <div style={{ color: "white", background: this.state.colores[this.props.num] , marginLeft: 700, marginRight: 1000 }}>
+                                <div style={{ color: "white", background: this.state.colores[this.props.num], marginLeft: 700, marginRight: 1000 }}>
                                         <div> {this.props.nombre}</div>
-                                <div> {this.props.puntos+"/"+ this.props.muertes}</div>
+                                        <div> {this.props.puntos + "/" + this.props.muertes}</div>
 
                                 </div>
                                 <img src="../images/jugador.png"
@@ -196,8 +197,10 @@ class Escenario extends React.Component {
                                                 this.mostrarBombas(msg[1]);
                                         } else if (msg[0] === "Fueg") {
                                                 this.mostrarFuegos(msg[1]);
-                                        } else if (msg[0] === "Pow"){
+                                        } else if (msg[0] === "Pow") {
                                                 this.mostrarPowerUps(msg[1]);
+                                        } else if(msg[0] === "est"){
+                                                this.cambiarestado(msg[1]);
                                         }
 
                                 }
@@ -213,7 +216,10 @@ class Escenario extends React.Component {
                         bombas: [],
                         fuegos: [],
                         powerUps: [],
+                        estado: "",
+                        escenario: false,
                 };
+                
         }
         componentDidMount() {
                 this.eventos();
@@ -237,6 +243,11 @@ class Escenario extends React.Component {
                         } else if (keyName === " ") {
                                 this.colocarBomba();
                         }
+                });
+        }
+        cambiarestado(nuevo){
+                this.setState({
+                        estado: nuevo
                 });
         }
         actualizar() {
@@ -276,7 +287,8 @@ class Escenario extends React.Component {
         prepararBloqueFijos(bloques) {
                 var obj = JSON.parse(bloques);
                 this.setState({
-                        bloquesfijos: obj
+                        bloquesfijos: obj,
+                        escenario: true
                 });
 
         }
@@ -334,10 +346,13 @@ class Escenario extends React.Component {
                 })
                 return (
                         <div>
-                                <img src="../images/fondo.jpg"
+                                {this.state.estado}
+                                {this.state.escenario ? <div>
+                                        <embed src="../sounds/fondo.mp3" autostart="true" loop="true"></embed>
+                                        <img src="../images/fondo.jpg"
                                         style={{ width: this.state.ancho + 30, height: this.state.alto + 30, position: 'absolute', top: 0, left: 0 }}
                                 >
-                                </img>
+                                </img> </div>: null }
                                 {bloquesF}
                                 {bloquesT}
                                 {jugadores}
@@ -374,13 +389,16 @@ class MyForm extends React.Component {
                 let nam = event.target.name;
                 let val = event.target.value;
                 this.setState({ [nam]: val });
+                
         }
+        
         render() {
                 console.log(this.state.visible);
                 return (
                         <div>
                                 <form onSubmit={this.mySubmitHandler} >
-                                        <h1>{this.state.username} {this.state.sala}</h1>
+                                        <h1>Bomberman Party</h1>
+                                        <h2>{this.state.username} {this.state.sala}</h2>
                                         <p>Nombre:</p>
                                         <input
                                                 type='text'
@@ -396,7 +414,6 @@ class MyForm extends React.Component {
                                         <br />
                                         <br />
                                         <input type='submit' />
-
                                 </form>
 
                                 {this.state.visible ? <Escenario sala={this.state.sala} user={this.state.username} /> : null}
