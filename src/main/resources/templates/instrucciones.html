@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <title>Bomberman Party</title>
+    </head>
+    <body>
+    
+        <h1>Bomberman Party</h1>
+        <div>
+            <p>the objective of the game is to accumulate the highest number of deaths, to kill another player you must use the bombs</p>
+        </div>
+        <div>
+            <p>Yo can move using the arrow keys</p>
+            <img src="/images/keys.png" width="100" height="100"></img>
+        </div>
+        <div>
+            <p>To place a bomb use the space bar</p>
+            <a href="https://www.clipart.email/download/550079.html" title="Image from clipart.email"><img src="https://cdn.clipart.email/8c3a1b20c55caa263756baa777667706_key-clipart_272-143.png" width="130" alt="Spacebar Key Clipart" /></a>
+        </div>
+        <div>
+            <p>With the bombs you can destroy the blocks to get powerUps</p>
+            <img src="/images/BloqueTemporal.png" width="100" height="100"></img>
+        </div>
+        <div>
+            <p>The bomb will allow you to place an extra bom</p>
+            <img src="/images/powerUpMunicion.png" width="100" height="100"></img>
+        </div>
+        <div>
+            <p>The star will allow you to increase the explosion area of the bombs</p>
+            <img src="/images/powerUpExplosion.png" width="100" height="100"></img>
+        </div>
+        <a th:href="@{/juego}"><button >Play</button></a>
+        <br></br>
+        <a th:href="@{/home}"><button >Back</button></a>
+    </body>
+
+</html>

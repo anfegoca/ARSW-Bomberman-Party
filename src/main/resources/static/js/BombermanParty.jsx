@@ -399,13 +399,13 @@ class MyForm extends React.Component {
                                 <form onSubmit={this.mySubmitHandler} >
                                         <h1>Bomberman Party</h1>
                                         <h2>{this.state.username} {this.state.sala}</h2>
-                                        <p>Nombre:</p>
+                                        <p>Name:</p>
                                         <input
                                                 type='text'
                                                 name='username'
                                                 onChange={this.myChangeHandler}
                                         />
-                                        <p>Sala:</p>
+                                        <p>Room:</p>
                                         <input
                                                 type='text'
                                                 name='sala'
@@ -413,7 +413,7 @@ class MyForm extends React.Component {
                                         />
                                         <br />
                                         <br />
-                                        <input type='submit' />
+                                        <input type='submit' value='Play'/>
                                 </form>
 
                                 {this.state.visible ? <Escenario sala={this.state.sala} user={this.state.username} /> : null}
